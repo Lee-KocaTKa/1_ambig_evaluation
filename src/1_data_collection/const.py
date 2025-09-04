@@ -1,7 +1,7 @@
 from string import Template 
 
 LLM_MODEL_CARD = "gpt-4o" 
-EMBEDDING_MODEL_CARD = "text-embedding-ada-002"
+EMBEDDING_MODEL_CARD = "text-embedding-3-large" 
 IMAGE_GENERATION_MODEL_CARD = "dall-e-3"     
 
 FILE_NAME = {
