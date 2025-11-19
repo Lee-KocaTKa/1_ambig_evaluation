@@ -15,7 +15,7 @@ from const import IMAGE_PATH, JSON_PATH, MODEL_CARDS, TYPE_NAMES
 def parse_args():
     """Parse command-line input arguments."""
     parser = argparse.ArgumentParser(description="Classification by CLIP models")
-    parser.add_argument("--model-choice", type=str, requried=True, help="Model choice")
+    parser.add_argument("--model-choice", type=str, required=True, help="Model choice")
     parser.add_argument("--caption-root", type=Path, default=JSON_PATH) 
     parser.add_argument("--image-root", type=Path, default=IMAGE_PATH)  
     parser.add_argument("--image-style", action="store_true", help="Whether to get results separated by image styles or not")
@@ -39,14 +39,34 @@ def extract_features(model, processor, text_list, image_list=None, device="cuda"
     with torch.no_grad():
         if image_list is not None: 
             inputs = processor(text=text_list, images=image_list, return_tensors="pt", padding=True).to(device) 
+            outputs = model(**inputs) 
         else: 
             inputs = processor(text=text_list, return_tensors="pt", padding=True).to(device) 
-        outputs = model(**inputs)
+        #outputs = model(**inputs)
     return {
         "text_embeds": outputs.text_embeds.cpu(),
         "image_embeds": getattr(outputs, "image_embeds", None), 
-        "logits_per_image": getattr(outputs, "logits_per_image", None)
+        "logits_per_image": getattr(outputs, "logits_per_image", None),
+        "logits_per_text": getattr(outputs, "logits_per_text", None) 
     } 
+
+def extract_features_only_text(model, tokeniser, text_list, device="cuda"): #-> Dict[str, torch.Tensor]:
+    """Extract text and/or image features using the model and processor."""
+    with torch.no_grad():
+        #if image_list is not None: 
+        #    inputs = processor(text=text_list, images=image_list, return_tensors="pt", padding=True).to(device) 
+        #    outputs = model(**inputs) 
+         
+        inputs = tokeniser(text=text_list, return_tensors="pt", padding=True).to(device) 
+        outputs = model.get_text_features(**inputs)
+    
+    return outputs 
+
+    #    "text_embeds": outputs.text_embeds.cpu(),
+    #    "image_embeds": getattr(outputs, "image_embeds", None), 
+    #    "logits_per_image": getattr(outputs, "logits_per_image", None),
+    #    "logits_per_text": getattr(outputs, "logits_per_text", None) 
+    #} 
 
     
 def compute_accuracy(logits: torch.Tensor) -> int: 
@@ -55,7 +75,7 @@ def compute_accuracy(logits: torch.Tensor) -> int:
 
  
 def process_sample(
-    model, processor, sample, ambiguity_type: str, image_root: Path, vector_extraction: bool 
+    model, processor, tokeniser, sample, ambiguity_type: str, image_root: Path, vector_extraction: bool 
 ) -> Dict[str, Any]: 
     """Process a single sample and return its result dictionary""" 
     variants = sample["Variants"]
@@ -77,22 +97,22 @@ def process_sample(
     
     # Forward Pass 
     outputs = extract_features(model, processor, input_captions, input_images) 
-    logits_img = outputs["logits_per_image"].cpu().numpy() 
-    logits_txt = outputs["logits_per_text"].cpu().numpy() 
+    logits_img = outputs["logits_per_image"].cpu()#.numpy() 
+    logits_txt = outputs["logits_per_text"].cpu()#.numpy() 
     
     result["Logits_per_Image"] = logits_img.tolist() 
     
     # Add features if requested 
     if vector_extraction:
-        img_feats = outputs["image_embeds"].cpu().numpy() 
-        txt_feats = outputs["text_embeds"].cpu().numpy() 
+        img_feats = outputs["image_embeds"].cpu()#.numpy() 
+        txt_feats = outputs["text_embeds"].cpu()#.numpy() 
         for j, v in enumerate(variants): 
             result[f"Variant_{j}_Image_Feature"] = img_feats[j].tolist() 
             result[f"Variant_{j}_Text_Feature"] = txt_feats[j].tolist() 
             
         # Ambiguous sentence text features 
-        ambig_out = extract_features(model, processor, [ambiguous_sentence]) 
-        result["Ambiguous_Text_Feature"] = ambig_out["text_embeds"][0].tolist() 
+        ambig_out = extract_features_only_text(model, tokeniser, [ambiguous_sentence]) 
+        result["Ambiguous_Text_Feature"] = ambig_out.tolist() 
         
     # Accuracy computation 
     i2t_correct = compute_accuracy(torch.tensor(logits_img)) 
@@ -117,8 +137,8 @@ def evaluate_model(args: argparse.Namespace) -> None:
     print(f"[INFO] Loading model: {args.model_choice} ({model_card})")
      
     processor = AutoProcessor.from_pretrained(model_card) 
-    #tokeniser = AutoTokenizer.from_pretrained(model_card)
-    model = AutoModel.from_pretrained(model_card, dtype=torch.bfloat16, attn_implementation="sdpa").to(device) 
+    tokeniser = AutoTokenizer.from_pretrained(model_card)
+    model = AutoModel.from_pretrained(model_card, dtype=torch.bfloat16, attn_implementation="eager").to(device) 
     model.eval() 
     
     #results_all = [] 
@@ -126,7 +146,7 @@ def evaluate_model(args: argparse.Namespace) -> None:
     
     for ambiguity_type in TYPE_NAMES: 
         print(f"\n[INFO] Processing type: {ambiguity_type}") 
-        json_file = args.caption_root / f"{ambiguity_type}_test.json" 
+        json_file = args.caption_root / f"{ambiguity_type}_testing.json" 
         
         if not json_file.exists():
             print(f"[WARNING] Missing file: {json_file}") 
@@ -139,7 +159,7 @@ def evaluate_model(args: argparse.Namespace) -> None:
         per_type_totals = {"i2t": [0, 0], "t2i": [0, 0], "dual": [0, 0]}
         
         for sample in tqdm(samples, desc=f"{ambiguity_type}"): 
-            result = process_sample(model, processor, sample, ambiguity_type, args.image_root, args.vector_extraction)
+            result = process_sample(model, processor, tokeniser, sample, ambiguity_type, args.image_root, args.vector_extraction)
             if not result: 
                 print(f"[WARNING] Noisy Sample: {sample["GroupID"]}")
                 continue 
@@ -154,7 +174,7 @@ def evaluate_model(args: argparse.Namespace) -> None:
             per_type_totals["dual"][1] += n 
     
         # Save pertype pickle 
-        output_dir = Path("../data/classification_results")
+        output_dir = Path("../../../data/ViLStrUB/classification_results")
         output_dir.mkdir(parents=True, exist_ok=True)
         output_path = output_dir / f"results_{args.model_choice}_{ambiguity_type}.pkl" 
         with open(output_path, "wb") as f: 

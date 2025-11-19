@@ -7,6 +7,14 @@ set -e
 SCRIPT="classification_by_CLIPs.py" 
 
 MODELS=(
+    #"vit-clip"
+    #"rn-clip"
+    #"vit-openclip"
+    #"convnext-openclip"
+    #"metaclip"
+    #"metaclip2"
+    #"siglip"
+    #"siglip2"
 
 )
 
