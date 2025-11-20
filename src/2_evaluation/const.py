@@ -1,8 +1,8 @@
 
 
 IMAGE_PATH = '../../../novy_vidaco/data/vidaco/images'
-JSON_PATH = '../../../novy_vidaco/data/vidaco/testing_data' 
-TYPE_NAMES = ['syntax-vp', 'syntax-pp', 'anaph', 'ellip', 'adjscope', 'verbscope', 'coordinate']  
+JSON_PATH = '../../../data/ViLStrUB/jsons/' 
+TYPE_NAMES = ['vp', 'pp', 'anaph', 'ellip', 'adjscope', 'verbscope', 'conj']  
 MODEL_CARDS = {
     "vit-clip" : "openai/clip-vit-large-patch14-336",
     "rn-clip" : "JaehoHan/custom-clip-resnet50-image-encoder",
