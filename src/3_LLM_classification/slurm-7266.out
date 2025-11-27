@@ -1,0 +1,15 @@
+▶ Running models: gpt-4o
+
+==============================
+🔵 Running model: gpt-4o
+==============================
+enter the key : Traceback (most recent call last):
+  File "/mnt/home/sangmyeong-l/research/1_ambig_evaluation/src/3_LLM_classification/openaimodels.py", line 232, in <module>
+    main()
+  File "/mnt/home/sangmyeong-l/research/1_ambig_evaluation/src/3_LLM_classification/openaimodels.py", line 228, in main
+    generate_model(args) 
+    ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/home/sangmyeong-l/research/1_ambig_evaluation/src/3_LLM_classification/openaimodels.py", line 141, in generate_model
+    apikey = input("enter the key : ")
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+EOFError: EOF when reading a line

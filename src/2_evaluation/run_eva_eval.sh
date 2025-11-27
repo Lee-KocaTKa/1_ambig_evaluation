@@ -1,5 +1,8 @@
 #!/bin/bash 
-
+#SBATCH --job-name=evaclip_testing
+#SBATCH --partition=public
+#SBATCH --gres=gpu:1
+#SBATCH --time=12:00:00
 
 set -e 
 

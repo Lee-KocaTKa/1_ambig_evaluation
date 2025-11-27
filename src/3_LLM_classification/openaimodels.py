@@ -139,6 +139,7 @@ def run_i2t(client, model_card, image_path, captions):
 def generate_model(args: argparse.Namespace) -> None: 
     """Main Generation loop across ambiguity types"""
     apikey = input("enter the key : ")
+    
     client = OpenAI(api_key = apikey)
     
     json_path = args.caption_root 

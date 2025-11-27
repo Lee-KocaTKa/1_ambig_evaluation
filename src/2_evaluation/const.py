@@ -1,6 +1,6 @@
 
 
-IMAGE_PATH = '../../../novy_vidaco/data/vidaco/images'
+IMAGE_PATH = '../../../data/ViLStrUB/images/'
 JSON_PATH = '../../../data/ViLStrUB/jsons/' 
 TYPE_NAMES = ['vp', 'pp', 'anaph', 'ellip', 'adjscope', 'verbscope', 'conj']  
 MODEL_CARDS = {

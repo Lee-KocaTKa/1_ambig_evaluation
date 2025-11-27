@@ -1,8 +1,12 @@
 #!/bin/bash
+#SBATCH --job-name=evaclip_testing
+#SBATCH --partition=public
+#SBATCH --gres=gpu:1
+#SBATCH --time=12:00:00
 set -e
 
 # Models you want to run
-MODELS=("gpt-5.1" "gpt-4o")
+MODELS=("gpt-4o")
 
 # Default paths (edit if needed)
 CAPTION_ROOT="../../../data/ViLStrUB/jsons_UNIT2/"
