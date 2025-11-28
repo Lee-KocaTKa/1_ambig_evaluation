@@ -5,7 +5,7 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 
 
-with open("../../../data/ViLStrUB/classification_results/results_metaclip2_coordinate.pkl", "rb") as f:
+with open("../../../data/ViLStrUB/classification_results/results_siglip2_vp.pkl", "rb") as f:
     data = pickle.load(f)   # data is a list of dicts
 
 
@@ -17,10 +17,10 @@ def extract_features(data, expected_dim=768):
     variant_keys = [
         "Variant_0_Text_Feature",
         "Variant_1_Text_Feature",
-        "Variant_2_Text_Feature",
+        #"Variant_2_Text_Feature",
         "Variant_0_Image_Feature",
         "Variant_1_Image_Feature",
-        "Variant_2_Image_Feature",
+        #"Variant_2_Image_Feature",
     ]
 
     for idx, sample in enumerate(data):
@@ -78,7 +78,7 @@ def run_tsne(vectors, n_components=3, seed=42):
 
 
 
-def plot_tsne(embedding, labels, save_path=".", title="metaclip2-conjunction"):
+def plot_tsne(embedding, labels, save_path="siglip2_vp", title="siglip2-vp"):
     fig = plt.figure(figsize=(12, 10))
     ax = fig.add_subplot(111, projection='3d')
 
