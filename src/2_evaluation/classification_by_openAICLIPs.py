@@ -140,10 +140,14 @@ def evaluate_model(args: argparse.Namespace) -> None:
     device = "cuda" if torch.cuda.is_available() else "cpu" 
     #model_card = MODEL_CARDS[args.model_choice]
     model_card = "convnext_xxlarge"
+    model_card = "convnext_xxlarge"
+    model_card = "RN50"
+    model_card = "RN101"
     pretrained_data = "laion2b_s34b_b82k_augreg"
+    pretrained_data = "openai"
     print(f"[INFO] Loading model: {model_card} pretrained by {pretrained_data}")
      
-    model, _, processor = open_clip.create_model_and_transforms(model_card, pretrained=pretrained_data)#, force_quick_gelu=True) 
+    model, _, processor = open_clip.create_model_and_transforms(model_card, pretrained=pretrained_data, force_quick_gelu=True) 
     model.to(device)
     model.eval() 
     tokeniser = open_clip.get_tokenizer(model_card)

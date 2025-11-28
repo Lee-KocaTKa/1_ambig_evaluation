@@ -1,7 +1,7 @@
 
 
 IMAGE_PATH = '../../../data/ViLStrUB/images/'
-JSON_PATH = '../../../data/ViLStrUB/jsons/' 
+JSON_PATH = '../../../data/ViLStrUB/jsons_UNIT2/' 
 TYPE_NAMES = ['vp', 'pp', 'anaph', 'ellip', 'adjscope', 'verbscope', 'conj']  
 MODEL_CARDS = {
     "vit-clip" : "openai/clip-vit-large-patch14-336",

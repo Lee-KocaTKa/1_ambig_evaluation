@@ -8,9 +8,9 @@ SCRIPT="classification_by_openAICLIPs.py"
 
 MODELS=(
     #"vit-clip"
-    #"rn-clip"
+    "rn-clip"
     #"vit-openclip"
-    #"convnext-openclip"
+    "convnext-openclip"
     #"metaclip"
     #"metaclip2"
     #"siglip"

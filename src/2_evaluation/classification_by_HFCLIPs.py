@@ -136,7 +136,7 @@ def evaluate_model(args: argparse.Namespace) -> None:
     model_card = MODEL_CARDS[args.model_choice]
     print(f"[INFO] Loading model: {args.model_choice} ({model_card})")
      
-    processor = AutoProcessor.from_pretrained(model_card) 
+    processor = AutoProcessor.from_pretrained(model_card, use_fast=True)  
     tokeniser = AutoTokenizer.from_pretrained(model_card)
     model = AutoModel.from_pretrained(model_card, dtype=torch.bfloat16, attn_implementation="eager").to(device) 
     model.eval() 
@@ -146,7 +146,7 @@ def evaluate_model(args: argparse.Namespace) -> None:
     
     for ambiguity_type in TYPE_NAMES: 
         print(f"\n[INFO] Processing type: {ambiguity_type}") 
-        json_file = args.caption_root / f"{ambiguity_type}_testing.json" 
+        json_file = args.caption_root / f"{ambiguity_type}.json" 
         
         if not json_file.exists():
             print(f"[WARNING] Missing file: {json_file}") 

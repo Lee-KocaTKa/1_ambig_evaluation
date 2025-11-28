@@ -4,17 +4,17 @@
 set -e 
 
 
-SCRIPT="classification_by_CLIPs.py" 
+SCRIPT="classification_by_HFCLIPs.py" 
 
 MODELS=(
-    #"vit-clip"
+    "vit-clip"
     #"rn-clip"
-    #"vit-openclip"
+    "vit-openclip"
     #"convnext-openclip"
-    #"metaclip"
-    #"metaclip2"
-    #"siglip"
-    #"siglip2"
+    "metaclip"
+    "metaclip2"
+    "siglip"
+    "siglip2"
 
 )
 
