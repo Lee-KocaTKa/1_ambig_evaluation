@@ -61,10 +61,10 @@ def extract_features(data, expected_dim=768):
         "Ambiguous_Text_Feature",
         "Variant_0_Text_Feature",
         "Variant_1_Text_Feature",
-        # "Variant_2_Text_Feature",  # enable if present
+        "Variant_2_Text_Feature",  # enable if present
         "Variant_0_Image_Feature",
         "Variant_1_Image_Feature",
-        # "Variant_2_Image_Feature",  # enable if present
+        "Variant_2_Image_Feature",  # enable if present
     ]
 
     for idx, sample in enumerate(data):
@@ -155,7 +155,7 @@ def main():
     parser.add_argument(
         "--input-pkl",
         type=str,
-        default="../../../data/ViLStrUB/classification_results/results_vit-openclip_vp.pkl",
+        default="../../../data/ViLStrUB/classification_results/results_vit-openclip_conj.pkl",
         help="Path to the pickle file (list of dicts with features).",
     )
     parser.add_argument(
@@ -167,7 +167,7 @@ def main():
     parser.add_argument(
         "--expected-dim",
         type=int,
-        default=1024,
+        default=768,
         help="Expected dimensionality of feature vectors.",
     )
     parser.add_argument(
